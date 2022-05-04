@@ -1,0 +1,27 @@
+server:
+  port: 8082
+  error:
+    include-stacktrace: never
+spring:
+  kafka:
+    consumer:
+      bootstrap-servers: localhost:9092
+      group-id: group-id
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring:
+          json:
+            trusted:
+              packages: 'com.tweetapp.entity'
+    producer:
+      bootstrap-servers: localhost:9092
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+  data:
+    mongodb:
+      uri: mongodb://127.0.0.1:27017/tweet-app?retryWrites=true&w=majority
+  application:
+    name: tweetApp
+
