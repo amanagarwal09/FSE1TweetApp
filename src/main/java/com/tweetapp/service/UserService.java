@@ -54,4 +54,6 @@ public interface UserService {
      * @return UserResponse
      */
     ResponseEntity<UserResponse> login(String loginId, String password);
+
+    ResponseEntity<UserResponse> getByUserName(String userName);
 }

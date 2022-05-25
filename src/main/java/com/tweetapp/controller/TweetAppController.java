@@ -104,6 +104,17 @@ public class TweetAppController {
     }
 
     /**
+     * API to search user based on Username
+     *
+     * @param userName
+     * @return UserResponse
+     */
+    @GetMapping("/user/{username}")
+    public ResponseEntity<UserResponse> getByUserName(@PathVariable("username") String userName) {
+        return userService.getByUserName(userName);
+    }
+
+    /**
      * API to get all tweet based on Username
      *
      * @param userName

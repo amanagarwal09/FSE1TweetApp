@@ -244,4 +244,37 @@ public class UserServiceImpl implements UserService {
                 .messageType(ServiceConstants.FAILURE)
                 .build(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
+
+    /**
+     * To search user based on Username
+     *
+     * @param userName
+     * @return UserResponse
+     */
+    @Override
+    public ResponseEntity<UserResponse> getByUserName(String userName) {
+        try {
+            Optional<UserEntity> userEntityList = userRepository.findByLoginId(userName);
+            if (userEntityList.isEmpty()) {
+                return new ResponseEntity<>(UserResponse.builder().message(ServiceConstants.USER_NOT_EXIST)
+                        .messageCode(HttpStatus.NOT_FOUND)
+                        .messageType(ServiceConstants.FAILURE)
+                        .build(), HttpStatus.NOT_FOUND);
+            }
+            List<User> userList = new ArrayList<>();
+            userList.add(EntityModelMapper.userEntityToUser(userEntityList.get()));
+
+            return new ResponseEntity<>(UserResponse.builder().message(ServiceConstants.SUCCESS)
+                    .userList(userList)
+                    .messageCode(HttpStatus.OK)
+                    .messageType(ServiceConstants.SUCCESS)
+                    .build(), HttpStatus.OK);
+        } catch (Exception e) {
+            log.error("Error while get by user Name {}", e.getMessage());
+        }
+        return new ResponseEntity<>(UserResponse.builder().message(ServiceConstants.FAILURE)
+                .messageCode(HttpStatus.INTERNAL_SERVER_ERROR)
+                .messageType(ServiceConstants.FAILURE)
+                .build(), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 }

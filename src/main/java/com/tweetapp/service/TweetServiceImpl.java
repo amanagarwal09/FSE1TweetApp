@@ -253,7 +253,7 @@ public class TweetServiceImpl implements TweetService {
                 Optional<TweetEntity> optionalTweetEntity = tweetRepository.findById(id);
                 if (optionalTweetEntity.isPresent()) {
                     Optional<TweetLikeEntity> optionalTweetLikeEntity = tweetLikeRepository.findByUserIdAndTweetId
-                            (optionalTweetEntity.get().getUserId(), id);
+                            (optionalUserLoginCheck.get().getUserId(), id);
                     if (optionalTweetLikeEntity.isPresent()) {
                         tweetLikeRepository.deleteById(optionalTweetLikeEntity.get().getTweetLikeId());
                         return new ResponseEntity<>(TweetResponse.builder().message(ServiceConstants.UNLIKE_TWEET)
