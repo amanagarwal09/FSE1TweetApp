@@ -1,5 +1,6 @@
 package com.tweetapp.service;
 
+import com.tweetapp.model.AuthResponse;
 import com.tweetapp.model.User;
 import com.tweetapp.model.UserResponse;
 import org.springframework.http.ResponseEntity;
@@ -56,4 +57,6 @@ public interface UserService {
     ResponseEntity<UserResponse> login(String loginId, String password);
 
     ResponseEntity<UserResponse> getByUserName(String userName);
+
+    ResponseEntity<AuthResponse> validateToken(String token);
 }

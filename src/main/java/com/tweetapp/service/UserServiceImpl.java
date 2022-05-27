@@ -1,6 +1,7 @@
 package com.tweetapp.service;
 
 import com.tweetapp.entity.UserEntity;
+import com.tweetapp.model.AuthResponse;
 import com.tweetapp.model.User;
 import com.tweetapp.model.UserResponse;
 import com.tweetapp.repository.UserRepository;
@@ -25,6 +26,8 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private SequenceService sequenceService;
+    @Autowired
+    private JwtUtil jwtutil;
 
     /**
      * To register user
@@ -82,10 +85,13 @@ public class UserServiceImpl implements UserService {
     public ResponseEntity<UserResponse> login(String loginId, String password) {
         try {
             Optional<UserEntity> optionalUserLoginCheck = userRepository.findByLoginId(loginId);
+            String generateToken = "";
             if (optionalUserLoginCheck.isPresent()) {
                 UserEntity userEntity = optionalUserLoginCheck.get();
                 if (userEntity.getPassword().equals(password)) {
+                    generateToken = jwtutil.generateToken(userEntity.getLoginId());
                     return new ResponseEntity<>(UserResponse.builder().message(ServiceConstants.LOGIN_SUCCESS)
+                            .authResponse(AuthResponse.builder().authToken(generateToken).userName(loginId).isValid(true).build())
                             .messageCode(HttpStatus.OK)
                             .messageType(ServiceConstants.SUCCESS)
                             .build(), HttpStatus.OK);
@@ -276,5 +282,24 @@ public class UserServiceImpl implements UserService {
                 .messageCode(HttpStatus.INTERNAL_SERVER_ERROR)
                 .messageType(ServiceConstants.FAILURE)
                 .build(), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    /**
+     * To validate token
+     *
+     * @param token
+     * @return AuthResponse
+     */
+    @Override
+    public ResponseEntity<AuthResponse> validateToken(String token) {
+        AuthResponse res = new AuthResponse();
+        try {
+            String token1 = token.substring(7);
+            res.setValid(jwtutil.validateToken(token1));
+        } catch (Exception e) {
+            res.setValid(false);
+            log.error("Token Expired {}", e.getMessage());
+        }
+        return new ResponseEntity<>(res, HttpStatus.OK);
     }
 }

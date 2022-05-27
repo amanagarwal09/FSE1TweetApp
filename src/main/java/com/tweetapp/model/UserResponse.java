@@ -13,6 +13,7 @@ import java.util.List;
 public class UserResponse {
 
     private List<User> userList;
+    private AuthResponse authResponse;
     private String messageType;
     private HttpStatus messageCode;
     private String message;

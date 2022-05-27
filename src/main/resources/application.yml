@@ -24,4 +24,17 @@ spring:
       uri: mongodb://127.0.0.1:27017/tweet-app?retryWrites=true&w=majority
   application:
     name: tweetApp
-
+jwt:
+  secret: sampletest
+management:
+  endpoint:
+    health:
+      show-details: "always"
+  info:
+    git:
+      mode: "full"
+  endpoints:
+    web:
+      exposure:
+        include: "health,info,env,metrics,mappings"
+      base-path: "/manage"

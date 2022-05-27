@@ -1,9 +1,6 @@
 package com.tweetapp.controller;
 
-import com.tweetapp.model.Tweet;
-import com.tweetapp.model.TweetResponse;
-import com.tweetapp.model.User;
-import com.tweetapp.model.UserResponse;
+import com.tweetapp.model.*;
 import com.tweetapp.service.TweetService;
 import com.tweetapp.service.UserService;
 import lombok.extern.slf4j.Slf4j;
@@ -185,5 +182,10 @@ public class TweetAppController {
     @PostMapping("/{username}/reply/{id}")
     public ResponseEntity<TweetResponse> replyToTweet(@PathVariable("username") String userName, @PathVariable("id") Integer id, @RequestBody @Valid Tweet tweet) {
         return tweetService.replyToTweet(userName, id, tweet);
+    }
+
+    @GetMapping("/validate")
+    public ResponseEntity<AuthResponse> getValidity(@RequestHeader("Authorization") final String token) {
+        return userService.validateToken(token);
     }
 }
