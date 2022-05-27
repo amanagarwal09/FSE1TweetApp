@@ -8,6 +8,7 @@ import com.tweetapp.repository.UserRepository;
 import com.tweetapp.utils.EntityModelMapper;
 import com.tweetapp.utils.ServiceConstants;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.kafka.common.protocol.types.Field;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -187,27 +188,35 @@ public class UserServiceImpl implements UserService {
     /**
      * To get all users
      *
+     * @param token
      * @return TweetResponse
      */
     @Override
-    public ResponseEntity<UserResponse> getAllUsers() {
+    public ResponseEntity<UserResponse> getAllUsers(String token) {
         try {
-            List<UserEntity> userEntityList = userRepository.findAll();
-            if (userEntityList.isEmpty()) {
-                return new ResponseEntity<>(UserResponse.builder().message(ServiceConstants.USER_NOT_EXIST)
-                        .messageCode(HttpStatus.NOT_FOUND)
+            if (validateToken(token)) {
+                List<UserEntity> userEntityList = userRepository.findAll();
+                if (userEntityList.isEmpty()) {
+                    return new ResponseEntity<>(UserResponse.builder().message(ServiceConstants.USER_NOT_EXIST)
+                            .messageCode(HttpStatus.NOT_FOUND)
+                            .messageType(ServiceConstants.FAILURE)
+                            .build(), HttpStatus.NOT_FOUND);
+                }
+                List<User> userList = new ArrayList<>();
+                for (UserEntity userEntity : userEntityList) {
+                    userList.add(EntityModelMapper.userEntityToUser(userEntity));
+                }
+                return new ResponseEntity<>(UserResponse.builder().message(ServiceConstants.SUCCESS)
+                        .userList(userList)
+                        .messageCode(HttpStatus.OK)
+                        .messageType(ServiceConstants.SUCCESS)
+                        .build(), HttpStatus.OK);
+            } else {
+                new ResponseEntity<>(UserResponse.builder().message(ServiceConstants.FAILURE)
+                        .messageCode(HttpStatus.FORBIDDEN)
                         .messageType(ServiceConstants.FAILURE)
-                        .build(), HttpStatus.NOT_FOUND);
+                        .build(), HttpStatus.INTERNAL_SERVER_ERROR);
             }
-            List<User> userList = new ArrayList<>();
-            for (UserEntity userEntity : userEntityList) {
-                userList.add(EntityModelMapper.userEntityToUser(userEntity));
-            }
-            return new ResponseEntity<>(UserResponse.builder().message(ServiceConstants.SUCCESS)
-                    .userList(userList)
-                    .messageCode(HttpStatus.OK)
-                    .messageType(ServiceConstants.SUCCESS)
-                    .build(), HttpStatus.OK);
         } catch (Exception e) {
             log.error("Error while get all User {}", e.getMessage());
         }
@@ -220,28 +229,36 @@ public class UserServiceImpl implements UserService {
     /**
      * To search user based on Username
      *
+     * @param token
      * @param userName
      * @return UserResponse
      */
     @Override
-    public ResponseEntity<UserResponse> searchByUserName(String userName) {
+    public ResponseEntity<UserResponse> searchByUserName(String token, String userName) {
         try {
-            List<UserEntity> userEntityList = userRepository.findByLoginIdLike(userName);
-            if (userEntityList.isEmpty()) {
-                return new ResponseEntity<>(UserResponse.builder().message(ServiceConstants.USER_NOT_EXIST)
-                        .messageCode(HttpStatus.NOT_FOUND)
+            if (validateToken(token)) {
+                List<UserEntity> userEntityList = userRepository.findByLoginIdLike(userName);
+                if (userEntityList.isEmpty()) {
+                    return new ResponseEntity<>(UserResponse.builder().message(ServiceConstants.USER_NOT_EXIST)
+                            .messageCode(HttpStatus.NOT_FOUND)
+                            .messageType(ServiceConstants.FAILURE)
+                            .build(), HttpStatus.NOT_FOUND);
+                }
+                List<User> userList = new ArrayList<>();
+                for (UserEntity userEntity : userEntityList) {
+                    userList.add(EntityModelMapper.userEntityToUser(userEntity));
+                }
+                return new ResponseEntity<>(UserResponse.builder().message(ServiceConstants.SUCCESS)
+                        .userList(userList)
+                        .messageCode(HttpStatus.OK)
+                        .messageType(ServiceConstants.SUCCESS)
+                        .build(), HttpStatus.OK);
+            } else {
+                new ResponseEntity<>(UserResponse.builder().message(ServiceConstants.FAILURE)
+                        .messageCode(HttpStatus.FORBIDDEN)
                         .messageType(ServiceConstants.FAILURE)
-                        .build(), HttpStatus.NOT_FOUND);
+                        .build(), HttpStatus.INTERNAL_SERVER_ERROR);
             }
-            List<User> userList = new ArrayList<>();
-            for (UserEntity userEntity : userEntityList) {
-                userList.add(EntityModelMapper.userEntityToUser(userEntity));
-            }
-            return new ResponseEntity<>(UserResponse.builder().message(ServiceConstants.SUCCESS)
-                    .userList(userList)
-                    .messageCode(HttpStatus.OK)
-                    .messageType(ServiceConstants.SUCCESS)
-                    .build(), HttpStatus.OK);
         } catch (Exception e) {
             log.error("Error while search by user Name {}", e.getMessage());
         }
@@ -254,27 +271,35 @@ public class UserServiceImpl implements UserService {
     /**
      * To search user based on Username
      *
+     * @param token
      * @param userName
      * @return UserResponse
      */
     @Override
-    public ResponseEntity<UserResponse> getByUserName(String userName) {
+    public ResponseEntity<UserResponse> getByUserName(String token, String userName) {
         try {
-            Optional<UserEntity> userEntityList = userRepository.findByLoginId(userName);
-            if (userEntityList.isEmpty()) {
-                return new ResponseEntity<>(UserResponse.builder().message(ServiceConstants.USER_NOT_EXIST)
-                        .messageCode(HttpStatus.NOT_FOUND)
-                        .messageType(ServiceConstants.FAILURE)
-                        .build(), HttpStatus.NOT_FOUND);
-            }
-            List<User> userList = new ArrayList<>();
-            userList.add(EntityModelMapper.userEntityToUser(userEntityList.get()));
+            if (validateToken(token)) {
+                Optional<UserEntity> userEntityList = userRepository.findByLoginId(userName);
+                if (userEntityList.isEmpty()) {
+                    return new ResponseEntity<>(UserResponse.builder().message(ServiceConstants.USER_NOT_EXIST)
+                            .messageCode(HttpStatus.NOT_FOUND)
+                            .messageType(ServiceConstants.FAILURE)
+                            .build(), HttpStatus.NOT_FOUND);
+                }
+                List<User> userList = new ArrayList<>();
+                userList.add(EntityModelMapper.userEntityToUser(userEntityList.get()));
 
-            return new ResponseEntity<>(UserResponse.builder().message(ServiceConstants.SUCCESS)
-                    .userList(userList)
-                    .messageCode(HttpStatus.OK)
-                    .messageType(ServiceConstants.SUCCESS)
-                    .build(), HttpStatus.OK);
+                return new ResponseEntity<>(UserResponse.builder().message(ServiceConstants.SUCCESS)
+                        .userList(userList)
+                        .messageCode(HttpStatus.OK)
+                        .messageType(ServiceConstants.SUCCESS)
+                        .build(), HttpStatus.OK);
+            } else {
+                new ResponseEntity<>(UserResponse.builder().message(ServiceConstants.FAILURE)
+                        .messageCode(HttpStatus.FORBIDDEN)
+                        .messageType(ServiceConstants.FAILURE)
+                        .build(), HttpStatus.INTERNAL_SERVER_ERROR);
+            }
         } catch (Exception e) {
             log.error("Error while get by user Name {}", e.getMessage());
         }
@@ -291,15 +316,15 @@ public class UserServiceImpl implements UserService {
      * @return AuthResponse
      */
     @Override
-    public ResponseEntity<AuthResponse> validateToken(String token) {
-        AuthResponse res = new AuthResponse();
+    public boolean validateToken(String token) {
+        boolean res;
         try {
             String token1 = token.substring(7);
-            res.setValid(jwtutil.validateToken(token1));
+            res = jwtutil.validateToken(token1);
         } catch (Exception e) {
-            res.setValid(false);
+            res = false;
             log.error("Token Expired {}", e.getMessage());
         }
-        return new ResponseEntity<>(res, HttpStatus.OK);
+        return res;
     }
 }

@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -80,64 +81,68 @@ class TweetAppControllerTest {
 
     @Test
     void testGetAllTweets() throws Exception {
-        when(tweetService.getAllTweets()).thenReturn(ResponseEntity.ok(TweetResponse.builder().messageCode(HttpStatus.OK).message("Success").build()));
-        RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/api/v1.0/tweets/all");
+        when(tweetService.getAllTweets(Mockito.anyString())).thenReturn(ResponseEntity.ok(TweetResponse.builder().messageCode(HttpStatus.OK).message("Success").build()));
+        RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/api/v1.0/tweets/all").header("Authorization", "AuthorizationAuthorizationAuthorization");
         mockMvc.perform(requestBuilder).andExpect(status().isOk());
     }
 
     @Test
     void testSearchByUserName() throws Exception {
-        when(userService.searchByUserName(Mockito.anyString())).thenReturn(ResponseEntity.ok(UserResponse.builder().messageCode(HttpStatus.OK).message("Success").build()));
-        RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/api/v1.0/tweets/user/search/testuser");
+        when(userService.searchByUserName(Mockito.anyString(), Mockito.anyString())).thenReturn(ResponseEntity.ok(UserResponse.builder().messageCode(HttpStatus.OK).message("Success").build()));
+        RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/api/v1.0/tweets/user/search/testuser").header("Authorization", "AuthorizationAuthorizationAuthorization");
         mockMvc.perform(requestBuilder).andExpect(status().isOk());
     }
 
     @Test
     void testGetAllTweetsOfUser() throws Exception {
-        when(tweetService.getAllTweetsOfUser(Mockito.anyString())).thenReturn(ResponseEntity.ok(TweetResponse.builder().messageCode(HttpStatus.OK).message("Success").build()));
-        RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/api/v1.0/tweets/testuser");
+        when(tweetService.getAllTweetsOfUser(Mockito.anyString(), Mockito.anyString())).thenReturn(ResponseEntity.ok(TweetResponse.builder().messageCode(HttpStatus.OK).message("Success").build()));
+        RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/api/v1.0/tweets/testuser")
+                .header("Authorization", "AuthorizationAuthorizationAuthorization");
         mockMvc.perform(requestBuilder).andExpect(status().isOk());
     }
 
     @Test
     void testPostNewTweet() throws Exception {
-        when(tweetService.postNewTweet(Mockito.anyString(), Mockito.any(Tweet.class))).thenReturn(ResponseEntity.ok(TweetResponse.builder().messageCode(HttpStatus.OK).message("Success").build()));
-        RequestBuilder requestBuilder = MockMvcRequestBuilders.post("/api/v1.0/tweets/testuser/add").content("{\"userId\":12,\"tweetId\":32,\"tweetDesc\":\"Testing\"}").contentType(MediaType.APPLICATION_JSON);
+        when(tweetService.postNewTweet(Mockito.anyString(), Mockito.anyString(), Mockito.any(Tweet.class))).thenReturn(ResponseEntity.ok(TweetResponse.builder().messageCode(HttpStatus.OK).message("Success").build()));
+        RequestBuilder requestBuilder = MockMvcRequestBuilders.post("/api/v1.0/tweets/testuser/add").content("{\"userId\":12,\"tweetId\":32,\"tweetDesc\":\"Testing\"}").contentType(MediaType.APPLICATION_JSON).header("Authorization", "AuthorizationAuthorizationAuthorization");
         mockMvc.perform(requestBuilder).andExpect(status().isOk());
     }
 
     @Test
     void testUpdateTweet() throws Exception {
-        when(tweetService.updateTweet(Mockito.anyString(), Mockito.anyInt(), Mockito.any(Tweet.class))).thenReturn(ResponseEntity.ok(TweetResponse.builder().messageCode(HttpStatus.OK).message("Success").build()));
-        RequestBuilder requestBuilder = MockMvcRequestBuilders.put("/api/v1.0/tweets/testuser/update/12").content("{\"userId\":12,\"tweetId\":32,\"tweetDesc\":\"Testing\"}").contentType(MediaType.APPLICATION_JSON);
+        when(tweetService.updateTweet(Mockito.anyString(), Mockito.anyString(), Mockito.anyInt(), Mockito.any(Tweet.class))).thenReturn(ResponseEntity.ok(TweetResponse.builder().messageCode(HttpStatus.OK).message("Success").build()));
+        RequestBuilder requestBuilder = MockMvcRequestBuilders.put("/api/v1.0/tweets/testuser/update/12")
+                .content("{\"userId\":12,\"tweetId\":32,\"tweetDesc\":\"Testing\"}").contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", "AuthorizationAuthorizationAuthorization");
         mockMvc.perform(requestBuilder).andExpect(status().isOk());
     }
 
     @Test
     void testDeleteTweet() throws Exception {
-        when(tweetService.deleteTweet(Mockito.anyString(), Mockito.anyInt())).thenReturn(ResponseEntity.ok(TweetResponse.builder().messageCode(HttpStatus.OK).message("Success").build()));
-        RequestBuilder requestBuilder = MockMvcRequestBuilders.delete("/api/v1.0/tweets/testuser/delete/12");
+        when(tweetService.deleteTweet(Mockito.anyString(), Mockito.anyString(), Mockito.anyInt())).thenReturn(ResponseEntity.ok(TweetResponse.builder().messageCode(HttpStatus.OK).message("Success").build()));
+        RequestBuilder requestBuilder = MockMvcRequestBuilders.delete("/api/v1.0/tweets/testuser/delete/12")
+                .header("Authorization", "AuthorizationAuthorizationAuthorization");
         mockMvc.perform(requestBuilder).andExpect(status().isOk());
     }
 
     @Test
     void testLikeTweet() throws Exception {
-        when(tweetService.likeTweet(Mockito.anyString(), Mockito.anyInt())).thenReturn(ResponseEntity.ok(TweetResponse.builder().messageCode(HttpStatus.OK).message("Success").build()));
-        RequestBuilder requestBuilder = MockMvcRequestBuilders.put("/api/v1.0/tweets/testuser/like/12");
+        when(tweetService.likeTweet(Mockito.anyString(), Mockito.anyString(), Mockito.anyInt())).thenReturn(ResponseEntity.ok(TweetResponse.builder().messageCode(HttpStatus.OK).message("Success").build()));
+        RequestBuilder requestBuilder = MockMvcRequestBuilders.put("/api/v1.0/tweets/testuser/like/12").header("Authorization", "AuthorizationAuthorizationAuthorization");
         mockMvc.perform(requestBuilder).andExpect(status().isOk());
     }
 
     @Test
     void testGetAllUsers() throws Exception {
-        when(userService.getAllUsers()).thenReturn(ResponseEntity.ok(UserResponse.builder().messageCode(HttpStatus.OK).message("Success").build()));
-        RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/api/v1.0/tweets/users/all");
+        when(userService.getAllUsers(Mockito.anyString())).thenReturn(ResponseEntity.ok(UserResponse.builder().messageCode(HttpStatus.OK).message("Success").build()));
+        RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/api/v1.0/tweets/users/all").header("Authorization", "AuthorizationAuthorizationAuthorization");
         mockMvc.perform(requestBuilder).andExpect(status().isOk());
     }
 
     @Test
     void testReplyToTweet() throws Exception {
-        when(tweetService.replyToTweet(Mockito.anyString(), Mockito.anyInt(), Mockito.any(Tweet.class))).thenReturn(ResponseEntity.ok(TweetResponse.builder().messageCode(HttpStatus.OK).message("Success").build()));
-        RequestBuilder requestBuilder = MockMvcRequestBuilders.post("/api/v1.0/tweets/testuser/reply/12").content("{\"tweetDesc\":\"Testing\"}").contentType(MediaType.APPLICATION_JSON);
+        when(tweetService.replyToTweet(Mockito.anyString(), Mockito.anyString(), Mockito.anyInt(), Mockito.any(Tweet.class))).thenReturn(ResponseEntity.ok(TweetResponse.builder().messageCode(HttpStatus.OK).message("Success").build()));
+        RequestBuilder requestBuilder = MockMvcRequestBuilders.post("/api/v1.0/tweets/testuser/reply/12").content("{\"tweetDesc\":\"Testing\"}").contentType(MediaType.APPLICATION_JSON).header("Authorization", "AuthorizationAuthorizationAuthorization");
         mockMvc.perform(requestBuilder).andExpect(status().isOk());
     }
 }

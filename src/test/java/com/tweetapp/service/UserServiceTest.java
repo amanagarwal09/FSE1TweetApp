@@ -30,6 +30,8 @@ class UserServiceTest {
 
     @Mock
     SequenceService sequenceService;
+    @Mock
+    JwtUtil jwtutil;
 
     @Test
     void testRegisterUserPasswordConflict() {
@@ -235,49 +237,55 @@ class UserServiceTest {
 
     @Test
     void testGetAllUsers() {
+        when(jwtutil.validateToken(Mockito.anyString())).thenReturn(true);
         when(userRepository.findAll())
                 .thenReturn(Collections.singletonList(TestUtil.sampleUserEntity()));
-        ResponseEntity<UserResponse> response = userService.getAllUsers();
+        ResponseEntity<UserResponse> response = userService.getAllUsers("tokentokentokentoken");
         assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 
     @Test
     void testGetAllUsersNotFound() {
+        when(jwtutil.validateToken(Mockito.anyString())).thenReturn(true);
         when(userRepository.findAll())
                 .thenReturn(Collections.emptyList());
-        ResponseEntity<UserResponse> response = userService.getAllUsers();
+        ResponseEntity<UserResponse> response = userService.getAllUsers("tokentokentokentoken");
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 
     @Test
     void testGetAllUsersException() {
+        when(jwtutil.validateToken(Mockito.anyString())).thenReturn(true);
         when(userRepository.findAll())
                 .thenThrow(NullPointerException.class);
-        ResponseEntity<UserResponse> response = userService.getAllUsers();
+        ResponseEntity<UserResponse> response = userService.getAllUsers("tokentokentokentokentoken");
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
     }
 
     @Test
     void testSearchByUserName() {
+        when(jwtutil.validateToken(Mockito.anyString())).thenReturn(true);
         when(userRepository.findByLoginIdLike(Mockito.anyString()))
                 .thenReturn(Collections.singletonList(TestUtil.sampleUserEntity()));
-        ResponseEntity<UserResponse> response = userService.searchByUserName("A");
+        ResponseEntity<UserResponse> response = userService.searchByUserName("tokentokentokentoken", "A");
         assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 
     @Test
     void testSearchByUserNameNotFound() {
+        when(jwtutil.validateToken(Mockito.anyString())).thenReturn(true);
         when(userRepository.findByLoginIdLike(Mockito.anyString()))
                 .thenReturn(Collections.emptyList());
-        ResponseEntity<UserResponse> response = userService.searchByUserName("A");
+        ResponseEntity<UserResponse> response = userService.searchByUserName("tokentokentokentoken", "A");
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 
     @Test
     void testSearchByUserNameException() {
+        when(jwtutil.validateToken(Mockito.anyString())).thenReturn(true);
         when(userRepository.findByLoginIdLike(Mockito.anyString()))
                 .thenThrow(NullPointerException.class);
-        ResponseEntity<UserResponse> response = userService.searchByUserName("A");
+        ResponseEntity<UserResponse> response = userService.searchByUserName("tokentokentokentoken", "A");
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
     }
 }

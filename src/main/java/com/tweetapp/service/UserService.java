@@ -1,6 +1,5 @@
 package com.tweetapp.service;
 
-import com.tweetapp.model.AuthResponse;
 import com.tweetapp.model.User;
 import com.tweetapp.model.UserResponse;
 import org.springframework.http.ResponseEntity;
@@ -26,17 +25,19 @@ public interface UserService {
     /**
      * To get all tweets
      *
+     * @param token
      * @return TweetResponse
      */
-    ResponseEntity<UserResponse> getAllUsers();
+    ResponseEntity<UserResponse> getAllUsers(String token);
 
     /**
      * To search user based on Username
      *
+     * @param token
      * @param userName
      * @return UserResponse
      */
-    ResponseEntity<UserResponse> searchByUserName(String userName);
+    ResponseEntity<UserResponse> searchByUserName(String token, String userName);
 
     /**
      * To reset Password
@@ -56,7 +57,7 @@ public interface UserService {
      */
     ResponseEntity<UserResponse> login(String loginId, String password);
 
-    ResponseEntity<UserResponse> getByUserName(String userName);
+    ResponseEntity<UserResponse> getByUserName(String token, String userName);
 
-    ResponseEntity<AuthResponse> validateToken(String token);
+    boolean validateToken(String token);
 }

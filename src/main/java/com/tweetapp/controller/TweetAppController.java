@@ -75,8 +75,8 @@ public class TweetAppController {
      * @return TweetResponse
      */
     @GetMapping("/all")
-    public ResponseEntity<TweetResponse> getAllTweets() {
-        return tweetService.getAllTweets();
+    public ResponseEntity<TweetResponse> getAllTweets(@RequestHeader("Authorization") final String token) {
+        return tweetService.getAllTweets(token);
     }
 
     /**
@@ -85,8 +85,8 @@ public class TweetAppController {
      * @return UserResponse
      */
     @GetMapping("/users/all")
-    public ResponseEntity<UserResponse> getAllUsers() {
-        return userService.getAllUsers();
+    public ResponseEntity<UserResponse> getAllUsers(@RequestHeader("Authorization") final String token) {
+        return userService.getAllUsers(token);
     }
 
     /**
@@ -96,8 +96,8 @@ public class TweetAppController {
      * @return UserResponse
      */
     @GetMapping("/user/search/{username}")
-    public ResponseEntity<UserResponse> searchByUserName(@PathVariable("username") String userName) {
-        return userService.searchByUserName(userName);
+    public ResponseEntity<UserResponse> searchByUserName(@RequestHeader("Authorization") final String token,@PathVariable("username") String userName) {
+        return userService.searchByUserName(token, userName);
     }
 
     /**
@@ -107,8 +107,8 @@ public class TweetAppController {
      * @return UserResponse
      */
     @GetMapping("/user/{username}")
-    public ResponseEntity<UserResponse> getByUserName(@PathVariable("username") String userName) {
-        return userService.getByUserName(userName);
+    public ResponseEntity<UserResponse> getByUserName(@RequestHeader("Authorization") final String token,@PathVariable("username") String userName) {
+        return userService.getByUserName(token, userName);
     }
 
     /**
@@ -118,8 +118,8 @@ public class TweetAppController {
      * @return TweetResponse
      */
     @GetMapping("/{username}")
-    public ResponseEntity<TweetResponse> getAllTweetsOfUser(@PathVariable("username") String userName) {
-        return tweetService.getAllTweetsOfUser(userName);
+    public ResponseEntity<TweetResponse> getAllTweetsOfUser(@RequestHeader("Authorization") final String token,@PathVariable("username") String userName) {
+        return tweetService.getAllTweetsOfUser(token, userName);
     }
 
     /**
@@ -130,8 +130,8 @@ public class TweetAppController {
      * @return TweetResponse
      */
     @PostMapping("/{username}/add")
-    public ResponseEntity<TweetResponse> postNewTweet(@PathVariable("username") String userName, @RequestBody @Valid Tweet tweet) {
-        return tweetService.postNewTweet(userName, tweet);
+    public ResponseEntity<TweetResponse> postNewTweet(@RequestHeader("Authorization") final String token,@PathVariable("username") String userName, @RequestBody @Valid Tweet tweet) {
+        return tweetService.postNewTweet(token, userName, tweet);
     }
 
     /**
@@ -143,8 +143,8 @@ public class TweetAppController {
      * @return TweetResponse
      */
     @PutMapping("/{username}/update/{id}")
-    public ResponseEntity<TweetResponse> updateTweet(@PathVariable("username") String userName, @PathVariable("id") Integer id, @RequestBody Tweet tweet) {
-        return tweetService.updateTweet(userName, id, tweet);
+    public ResponseEntity<TweetResponse> updateTweet(@RequestHeader("Authorization") final String token,@PathVariable("username") String userName, @PathVariable("id") Integer id, @RequestBody Tweet tweet) {
+        return tweetService.updateTweet(token, userName, id, tweet);
     }
 
     /**
@@ -155,8 +155,8 @@ public class TweetAppController {
      * @return TweetResponse
      */
     @DeleteMapping("/{username}/delete/{id}")
-    public ResponseEntity<TweetResponse> deleteTweet(@PathVariable("username") String userName, @PathVariable("id") Integer id) {
-        return tweetService.deleteTweet(userName, id);
+    public ResponseEntity<TweetResponse> deleteTweet(@RequestHeader("Authorization") final String token,@PathVariable("username") String userName, @PathVariable("id") Integer id) {
+        return tweetService.deleteTweet(token, userName, id);
     }
 
     /**
@@ -167,8 +167,8 @@ public class TweetAppController {
      * @return TweetResponse
      */
     @PutMapping("/{username}/like/{id}")
-    public ResponseEntity<TweetResponse> likeTweet(@PathVariable("username") String userName, @PathVariable("id") Integer id) {
-        return tweetService.likeTweet(userName, id);
+    public ResponseEntity<TweetResponse> likeTweet(@RequestHeader("Authorization") final String token,@PathVariable("username") String userName, @PathVariable("id") Integer id) {
+        return tweetService.likeTweet(token, userName, id);
     }
 
     /**
@@ -180,12 +180,7 @@ public class TweetAppController {
      * @return TweetResponse
      */
     @PostMapping("/{username}/reply/{id}")
-    public ResponseEntity<TweetResponse> replyToTweet(@PathVariable("username") String userName, @PathVariable("id") Integer id, @RequestBody @Valid Tweet tweet) {
-        return tweetService.replyToTweet(userName, id, tweet);
-    }
-
-    @GetMapping("/validate")
-    public ResponseEntity<AuthResponse> getValidity(@RequestHeader("Authorization") final String token) {
-        return userService.validateToken(token);
+    public ResponseEntity<TweetResponse> replyToTweet(@RequestHeader("Authorization") final String token, @PathVariable("username") String userName, @PathVariable("id") Integer id, @RequestBody @Valid Tweet tweet) {
+        return tweetService.replyToTweet(token, userName, id, tweet);
     }
 }
